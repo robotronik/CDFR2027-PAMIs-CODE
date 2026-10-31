@@ -9,7 +9,7 @@
 
 use embassy_executor::Spawner;
 use embassy_time::{Duration, Timer};
-use esp_hal::clock::CpuClock;
+use esp_println::println;
 
 mod utility;
 use utility::LedTask;
@@ -36,9 +36,6 @@ async fn main(spawner: Spawner) -> ! {
     // generator version: 1.4.0
     // generator parameters: -o esp32s3 -o esp32s3-wroom-1-octal-psram -o unstable-hal -o embassy -o ci -o agents -o vscode
 
-    let config = esp_hal::Config::default().with_cpu_clock(CpuClock::max());
-    let peripherals = esp_hal::init(config);
-
     // The following pins are used to bootstrap the chip. They are available
     // for use, but check the datasheet of the module for more information on them.
     // - GPIO0
@@ -60,11 +57,12 @@ async fn main(spawner: Spawner) -> ! {
     let _gpio37 = peripherals.GPIO37;
     */
 
-    let board = Board::init(peripherals);
- 
+    let board = Board::init(); 
+
     LedTask::spawn(&spawner, board.status_led, 500);
 
     loop {
+        println!("Main loop tick");
         Timer::after(Duration::from_secs(1)).await;
     }
 
